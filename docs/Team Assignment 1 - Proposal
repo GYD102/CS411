@@ -1,1 +1,25 @@
 
+Political Poll (Versus)
+    Political Poll(Versus) is a quiz that gives advice on political stances. In 
+    this quiz, you are continuously asked to make either-or choices between two 
+    politicians who have the opposing political stances due to some specific 
+    scenarios. This application will allow users to find out which candidates 
+    have the same views as them. The GovTrack.us API will allow us to extract 
+    politicians’ political history and their stances. Along with a text 
+    interpreter API such as TextRazor API we can compare the govtrack data we
+    gather and try to match a user’s answers to a politician. We would require a
+    Facebook OAuth to start the quiz, and use a database to maintain a user’s 
+    answers to questions. 
+
+
+Face Hero
+    Face Hero is a game where emojis fall from the top of the screen to the beat
+    of a song, and you’d match the emotions with your webcam/face to score 
+    points. Microsoft’s Azure Face API would allow us to extract emotion from a 
+    visual feed, to check whether the player’s facial expression matches the 
+    emojis’, and Spotify’s Music Analysis API identifies the location of beats 
+    and bars for us to place targets/emojis. We would require a Facebook OAuth 
+    to start playing, and use a database to maintain a score leaderboard for any 
+    given song.
+
+

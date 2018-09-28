@@ -1,3 +1,8 @@
+Group Members:
+    Jasmeet Kaur
+    Kai Munechika
+    Laisheng Zhang
+    Glib Dolotov
 
 Political Poll (Versus)
     Political Poll(Versus) is a quiz that gives advice on political stances. In 
@@ -10,7 +15,6 @@ Political Poll (Versus)
     gather and try to match a user’s answers to a politician. We would require a
     Facebook OAuth to start the quiz, and use a database to maintain a user’s 
     answers to questions. 
-
 
 Face Hero
     Face Hero is a game where emojis fall from the top of the screen to the beat

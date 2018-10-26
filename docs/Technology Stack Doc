@@ -6,7 +6,5 @@ Initially, we were considering between
 After frameworks we're familiar with and what we'd like to learn/work with over the course of the semester, we ultimately decided on using MERN -- MySQL, Express, React, and Node. 
 
 We chose MySQL because we don't need the performance boost of a NoSQL database and are more familiar with SQL.
-
 We went with Express and Node for the backend frameworks so that we could get more experience with JavaScript, and also since these frameworks are trending in the industry.
-
 We decided on React for the front end (this is not used in our prototype, but is used in our main project (contained in the /versus directory on GitHub) for simplicty reasons) for similar reasons: to learn something new that is also trending.

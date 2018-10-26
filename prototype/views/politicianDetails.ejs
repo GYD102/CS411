@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .tabbed {
+            padding-left: 5em;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Name -->
+<h1> <%= name %> </h1>
+
+<% if (data.url) { %>
+<p><a href="<%= data.url %>"> Website </a></p>
+<% } %>
+
+<% if (data.times_topics_url) { %>
+<p><a href="<%= data.times_topics_url %>"> News </a></p>
+<% } %>
+
+<p>Most recent vote date: <%= data.most_recent_vote %></p>
+<p>Stats in congress <%= data.roles[0].congress %>:</p>
+
+<p class="tabbed" }>Title: <%= data.roles[0].title %></p>
+<p class="tabbed">State: <%= data.roles[0].state %></p>
+<p class="tabbed">Party: <%= data.roles[0].party %></p>
+<p class="tabbed">Bills sponsored: <%= data.roles[0].bills_sponsored %></p>
+<p class="tabbed">Bills cosponsored: <%= data.roles[0].billscosponsored %></p>
+<p class="tabbed">Missed votes percentage: <%= data.roles[0].missed_votes_pct %></p>
+<p class="tabbed">Votes with party percentage: <%= data.roles[0].votes_with_party_pct %> </p>
+
+<br>
+<p> <%= data.bio %> </p>
+
+<p>Data last updated: <%= data.last_updated %> </p>
+
+</body>
+</html>
+

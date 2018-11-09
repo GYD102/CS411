@@ -1,0 +1,7 @@
+From the Propublica API, we will cache the name and id for each senator; the id, title, topic, and summary for selected bills; and the vote data that indicates whether a senator voted yes, no, or abstained for a given bill.
+
+We will not cache/save the images and results from our users in using the facial + emotion recognition API, since it will result in many cache misses -- the probability of a user taking the exact same picture from their camera is very low. 
+
+From our bioguide.congress.gov web scraper, we will cache selected politicians' image files and biography text.
+
+Before making an API/web-scrape call, we will check if the requested data is stored in our database, if not, we will make the call and store the result in our database, then return that data.

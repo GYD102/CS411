@@ -21,7 +21,7 @@ def welcome():
     return render_template('homepage.html', user=github.get('/user').json())
 
 
-@app.route('/login')
+@app.route('/github')
 def github_login():
     if not github.authorized:
         return redirect(url_for('github.login'))

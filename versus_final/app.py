@@ -64,11 +64,21 @@ def pick_senators():
 @app.route('/quiz/start', methods=['POST'])
 def start_quiz():
     if github.authorized:
+        questions = MockDB.get_mock_questions()[:3]
+
         # grab the value attribute associated with the options selected
         senator_1 = request.form.get('senator_1')
         senator_2 = request.form.get('senator_2')
+        question_num = int(request.form.get('question_num'))
+        answers = request.form.get('answers')
 
-        return f'quiz start page for {senator_1} and {senator_2}'
+        print(senator_1, senator_2, question_num, answers)
+        if question_num < len(questions):
+            question = questions[question_num]
+            return render_template('quiz_start.html', senator_1=senator_1, senator_2=senator_2,
+                                   question_num=question_num, question=question, answers=answers)
+
+        return "quiz done"
 
     return redirect(url_for('welcome'))
 
@@ -90,11 +100,12 @@ def photo_post():
 
         if sentiment_dict:
             majority_sentiment = max(sentiment_dict.items(), key=operator.itemgetter(1))[0]
-            return majority_sentiment
+            score = AzureFace.get_score(majority_sentiment)
+            return str(score)
 
-        return 'Face not found - please try again'
+        return 'E: Face not found - please try again'
 
-    return 'Please take picture'
+    return 'E: Please take picture'
 
 
 if __name__ == "__main__":

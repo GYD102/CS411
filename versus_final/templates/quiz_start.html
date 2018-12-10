@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .hidden {
+            display: none;
+        }
+
+        button {
+            margin: 0 10px 20px 0;
+            width: 99px;
+        }
+
+        button:last-of-type {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 0 20px 0;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div id="container">
+
+    <p><b>{{ 'Question ' + (question_num+1)|string + ':'}}</b></p>
+    <p>{{ question }}</p>
+    <div>
+        <button id="takePhoto">Take Photo</button>
+        <button id="submit">submit</button>
+        <p id="result" style="display:inline; margin-left: 15px"></p>
+        <div class="select">
+            <label for="videoSource">Video source: </label><select id="videoSource"></select>
+        </div>
+    </div>
+    <img id="img">
+    <br>
+
+</div>
+
+<script>
+'use strict';
+
+/* globals ImageCapture */
+
+// This code is adapted from
+// https://cdn.rawgit.com/Miguelao/demos/master/imagecapture.html
+
+// window.isSecureContext could be used for Chrome
+var isSecureOrigin = location.protocol === 'https:' ||
+location.host === 'localhost';
+if (!isSecureOrigin) {
+  alert('getUserMedia() must be run from a secure origin: HTTPS or localhost.' +
+    '\n\nChanging protocol to HTTPS');
+  location.protocol = 'HTTPS';
+}
+
+var constraints;
+var imageCapture;
+var mediaStream;
+
+var takePhotoButton = document.querySelector('button#takePhoto');
+
+var canvas = document.querySelector('canvas');
+var img = document.querySelector('img');
+var videoSelect = document.querySelector('select#videoSource');
+var zoomInput = document.querySelector('input#zoom');
+
+takePhotoButton.onclick = takePhoto;
+videoSelect.onchange = getStream;
+
+// Get a list of available media input (and output) devices
+// then get a MediaStream for the currently selected input device
+navigator.mediaDevices.enumerateDevices()
+  .then(gotDevices)
+  .catch(error => {
+    console.log('enumerateDevices() error: ', error);
+  })
+  .then(getStream);
+
+// From the list of media devices available, set up the camera source <select>,
+// then get a video stream from the default camera source.
+function gotDevices(deviceInfos) {
+  for (var i = 0; i !== deviceInfos.length; ++i) {
+    var deviceInfo = deviceInfos[i];
+    console.log('Found media input or output device: ', deviceInfo);
+    var option = document.createElement('option');
+    option.value = deviceInfo.deviceId;
+    if (deviceInfo.kind === 'videoinput') {
+      option.text = deviceInfo.label || 'Camera ' + (videoSelect.length + 1);
+      videoSelect.appendChild(option);
+    }
+  }
+}
+
+// Get a video stream from the currently selected camera source.
+function getStream() {
+  if (mediaStream) {
+    mediaStream.getTracks().forEach(track => {
+      track.stop();
+    });
+  }
+  var videoSource = videoSelect.value;
+  constraints = {
+    video: {deviceId: videoSource ? {exact: videoSource} : undefined}
+  };
+  navigator.mediaDevices.getUserMedia(constraints)
+    .then(gotStream)
+    .catch(error => {
+      console.log('getUserMedia error: ', error);
+    });
+}
+
+// Display the stream from the currently selected camera source, and then
+// create an ImageCapture object, using the video from the stream.
+function gotStream(stream) {
+  console.log('getUserMedia() got stream: ', stream);
+  mediaStream = stream;
+  imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
+  getCapabilities();
+}
+
+// Get the PhotoCapabilities for the currently selected camera source.
+function getCapabilities() {
+  imageCapture.getPhotoCapabilities().then(function(capabilities) {
+    console.log('Camera capabilities:', capabilities);
+    if (capabilities.zoom.max > 0) {
+      zoomInput.min = capabilities.zoom.min;
+      zoomInput.max = capabilities.zoom.max;
+      zoomInput.value = capabilities.zoom.current;
+      zoomInput.classList.remove('hidden');
+    }
+  }).catch(function(error) {
+    console.log('getCapabilities() error: ', error);
+  });
+}
+
+var globalBlob;
+// Get a Blob from the currently selected camera source and
+// display this with an img element.
+function takePhoto() {
+  imageCapture.takePhoto().then(function(blob) {
+    console.log('Took photo:', blob);
+    globalBlob = blob;
+    img.classList.remove('hidden');
+    img.src = URL.createObjectURL(blob);
+  }).catch(function(error) {
+    console.log('takePhoto() error: ', error);
+  });
+}
+
+var resultText = document.getElementById('result');
+var submitButton = document.getElementById('submit');
+    submitButton.addEventListener('click', function () {
+        var formData = new FormData();
+        formData.append("PostImage", globalBlob);
+        // formData.append("senator_1", {{ senator_1 }})
+        // formData.append("senator_2", {{ senator_2 }})
+        // formData.append("question_num", {{ question_num }})
+        // formData.append("answers", {{ senator_1 }})
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/photo");
+        xhr.send(formData);
+
+        resultText.innerText = "Loading...";
+        xhr.onload = function() {
+            var response = this.responseText;
+            if (response.slice(0, 2) === "E:") {
+                // Error
+                resultText.innerText = '';
+                alert(response.slice(2))
+            } else {
+                // Success
+                var score = response;
+
+                var form = document.createElement("form");
+                form.style.display = "none";
+                form.method = "post";
+                form.action = "/quiz/start";
+
+
+                var senator_1 = document.createElement("input");
+                senator_1.name = "senator_1";
+                senator_1.value = "{{ senator_1 }}";
+
+                var senator_2 = document.createElement("input");
+                senator_2.name = "senator_2";
+                senator_2.value = "{{ senator_2 }}";
+
+                var question_num = document.createElement("input");
+                question_num.name = "question_num";
+                question_num.value = "{{ question_num|int + 1 }}";
+
+                var answer = document.createElement("input");
+                answer.name = "answers";
+                answer.value = "{{ answers }}" + score;
+
+                form.appendChild(senator_1);
+                form.appendChild(senator_2);
+                form.appendChild(question_num);
+                form.appendChild(answer);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    });
+</script>
+</body>
+</html>

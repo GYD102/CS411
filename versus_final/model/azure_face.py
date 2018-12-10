@@ -40,6 +40,23 @@ class AzureFace:
 
         return None
 
+    @staticmethod
+    def get_score(sentiment_key):
+        """
+        :param sentiment_key: string
+        :return: score : int
+        """
+        keys = {'anger', 'contempt', 'disgust', 'fear', 'happiness', 'neutral', 'sadness', 'surprise'}
+        assert sentiment_key in keys
+
+        negative = {'anger', 'contempt', 'disgust', 'fear', 'surprise', 'sadness'}
+        neutral = {'neutral'}
+        positive = {'happiness'}
+
+        if sentiment_key in negative: return -1
+        if sentiment_key in neutral: return 0
+        return 1
+
 
 def test():
     image_url = 'http://airbnboverlast.nl/wp-content/uploads/2016/06/happy-man-768x402.jpg'

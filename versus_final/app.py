@@ -6,6 +6,7 @@ import operator
 from model.azure_face import AzureFace
 import config
 from model.mock_db import MockDB
+from model.quiz_result_processor import QuizResultProcessor
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
@@ -78,7 +79,22 @@ def start_quiz():
             return render_template('quiz_start.html', senator_1=senator_1, senator_2=senator_2,
                                    question_num=question_num, question=question, answers=answers)
 
-        return "quiz done"
+        # if we reach here, the quiz is finished
+        session['senator_result'] = QuizResultProcessor.process_results(senator_1, senator_2, answers)
+
+        return redirect(url_for('quiz_result'))
+
+    return redirect(url_for('welcome'))
+
+
+@app.route('/quiz/result', methods=['GET'])
+def quiz_result():
+    if github.authorized:
+        if 'senator_result' in session:
+            senator_id = session['senator_result']
+            senator = MockDB.get_senator(senator_id)
+
+            return render_template('quiz_result.html', senator=senator)
 
     return redirect(url_for('welcome'))
 

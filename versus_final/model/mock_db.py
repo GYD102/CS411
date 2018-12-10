@@ -1,3 +1,13 @@
+class Senator:
+
+    def __init__(self, id, name, biography, image_url):
+        self.id = id
+        self.name = name
+        self.biography = biography
+        self.image_url = image_url
+
+
+
 class MockDB:
 
     @staticmethod
@@ -16,3 +26,8 @@ class MockDB:
             'Blandit ante. Pellentesque at eleifend eros, et convallis felis. Maecenas euismod, nisi et sollicitudin aliquet?',
             'Nunc magna vestibulum velit, posuere pharetra risus ante non velit?'
         ]
+
+
+    @staticmethod
+    def get_senator(senator_id):
+        return Senator(senator_id, "Test name", "Test bio", "https://upload.wikimedia.org/wikipedia/commons/d/de/Bernie_Sanders.jpg")

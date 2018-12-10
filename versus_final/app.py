@@ -24,6 +24,8 @@ def welcome():
         return render_template('login_prompt.html')
 
     user = github.get('/user').json()
+
+    # todo: insert new user into db we don't have this user_id
     # user_id = user['id']
 
     return render_template('homepage.html', user=user)

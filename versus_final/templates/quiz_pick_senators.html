@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script>
+        function validateForm() {
+            var choice1 = document.forms['select_senators']['senator_1'].value;
+            var choice2 = document.forms['select_senators']['senator_2'].value;
+            if (choice1 === choice2) {
+                alert("Select 2 different senators");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+
+<form name="select_senators" method="post" action="{{ url_for('start_quiz') }}" onsubmit="return validateForm()">
+    Senator 1 <br>
+    <select name="senator_1">
+        {% for name, id in senators.items() %}
+        <option value="{{ id }}">{{ name }}</option>
+        {% endfor %}
+    </select>
+
+    <br>
+    <br>
+
+    Senator 2 <br>
+    <select name="senator_2">
+        {% for name, id in senators.items() %}
+        <option value="{{ id }}">{{ name }}</option>
+        {% endfor %}
+    </select>
+    <br>
+    <br>
+    <button type="submit">Take Quiz</button>
+</form>
+
+</body>
+</html>

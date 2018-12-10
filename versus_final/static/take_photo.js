@@ -121,5 +121,6 @@ var submitButton = document.getElementById('submit');
         xhr.open("POST", "/photo");
         xhr.send(formData);
 
+        resultText.innerText = "Loading...";
         xhr.onload = function() { resultText.innerText = this.responseText; }
     });

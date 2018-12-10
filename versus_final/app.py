@@ -5,11 +5,13 @@ import os
 import operator
 from model.azure_face import AzureFace
 import config
+from model.mock_db import MockDB
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = config.SECRET_KEY
+app.url_map.strict_slashes = False
 
 blueprint = make_github_blueprint(client_id=config.GITHUB_CLIENT_ID, client_secret=config.GITHUB_CLIENT_SECRET)
 app.register_blueprint(blueprint, url_prefix='/github_login')
@@ -44,6 +46,29 @@ def logout():
         )
 
         session.clear()
+
+    return redirect(url_for('welcome'))
+
+
+@app.route('/quiz', methods=['GET'])
+@app.route('/quiz/pick_senators', methods=['GET'])
+def pick_senators():
+    if github.authorized:
+        # senators : dict[senator_name] = senator_id
+        senators = MockDB.get_mock_senators()
+        return render_template('quiz_pick_senators.html', senators=senators)
+
+    return redirect(url_for('welcome'))
+
+
+@app.route('/quiz/start', methods=['POST'])
+def start_quiz():
+    if github.authorized:
+        # grab the value attribute associated with the options selected
+        senator_1 = request.form.get('senator_1')
+        senator_2 = request.form.get('senator_2')
+
+        return f'quiz start page for {senator_1} and {senator_2}'
 
     return redirect(url_for('welcome'))
 

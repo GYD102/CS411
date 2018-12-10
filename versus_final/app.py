@@ -99,12 +99,12 @@ def quiz_result():
     return redirect(url_for('welcome'))
 
 
-@app.route('/photo', methods=['GET'])
-def photo():
-    if not github.authorized:
-        return redirect(url_for('welcome'))
+@app.route('/history', methods=['GET'])
+def history():
+    if github.authorized:
+        return 'HISTORY'
 
-    return render_template('take_photo.html')
+    return redirect(url_for('welcome'))
 
 
 @app.route('/photo', methods=['POST'])

@@ -1,6 +1,7 @@
 import requests
 import config
 from bs4 import BeautifulSoup
+from model.popos.senator import Senator
 
 # todo: store this in db for senators we're using
 cached_senators = {'Lamar Alexander': 'A000360', 'Kelly Ayotte': 'A000368', 'Tammy Baldwin': 'B001230',
@@ -49,6 +50,7 @@ cached_senators = {'Lamar Alexander': 'A000360', 'Kelly Ayotte': 'A000368', 'Tam
                    'John Kennedy': 'K000393', 'Jon Kyl': 'K000352', 'Tina Smith': 'S001203',
                    'Luther Strange': 'S001202',
                    'Chris Van Hollen': 'V000128', 'Todd Young': 'Y000064', 'Bernie Sanders': 'S000033'}
+cached_senators_id_to_name = {v: k for k, v in cached_senators.items()}
 
 
 class ProPublica:
@@ -106,6 +108,16 @@ class ProPublica:
         blob = r.content
         return blob
 
+    @staticmethod
+    def get_senator_object(senator_id):
+        """
+        :param senator_id: str
+        :return: senator : Senator
+        """
+        name = cached_senators_id_to_name[senator_id]
+        bio, image_url = ProPublica.get_senator_bio_and_image(senator_id)
+        return Senator(senator_id, name, bio, image_url)
+
 
 def test():
     senators = ProPublica.get_senator_ids()
@@ -118,6 +130,5 @@ def test():
     print(blob)
 
 
-debug = True
-if debug:
+if __name__ == "__main__":
     test()

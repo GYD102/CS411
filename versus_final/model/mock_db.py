@@ -1,12 +1,4 @@
-class Senator:
-
-    def __init__(self, id, name, biography, image_url):
-        self.id = id
-        self.name = name
-        self.biography = biography
-        self.image_url = image_url
-
-
+from model.propublica import ProPublica
 
 class MockDB:
 
@@ -30,4 +22,13 @@ class MockDB:
 
     @staticmethod
     def get_senator(senator_id):
-        return Senator(senator_id, "Test name", "Test bio", "https://upload.wikimedia.org/wikipedia/commons/d/de/Bernie_Sanders.jpg")
+        senator_in_db = False
+        if not senator_in_db:
+            senator_object = ProPublica.get_senator_object(senator_id)
+            # insert senator_object into db
+            return senator_object
+
+        else:
+            # return senator_object from db
+            return None
+

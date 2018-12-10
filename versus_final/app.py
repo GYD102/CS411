@@ -6,7 +6,7 @@ import operator
 from model.azure_face import AzureFace
 import config
 from model.mock_db import MockDB
-from model.quiz_result_processor import QuizResultProcessor
+from controller.quiz_result_processor import QuizResultProcessor
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 

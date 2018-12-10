@@ -1,7 +1,9 @@
-from flask import Flask, redirect, url_for, session, render_template
+from flask import Flask, redirect, url_for, session, render_template, request
 from flask_dance.contrib.github import make_github_blueprint, github
 import requests
 import os
+import operator
+from model.azure_face import AzureFace
 import config
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -18,7 +20,10 @@ def welcome():
     if not github.authorized:
         return render_template('login_prompt.html')
 
-    return render_template('homepage.html', user=github.get('/user').json())
+    user = github.get('/user').json()
+    # user_id = user['id']
+
+    return render_template('homepage.html', user=user)
 
 
 @app.route('/github')
@@ -43,5 +48,29 @@ def logout():
     return redirect(url_for('welcome'))
 
 
+@app.route('/photo', methods=['GET'])
+def photo():
+    if not github.authorized:
+        return redirect(url_for('welcome'))
+
+    return render_template('take_photo.html')
+
+
+@app.route('/photo', methods=['POST'])
+def photo_post():
+    if 'PostImage' in request.files:
+        file = request.files['PostImage']
+        blob = file.read()
+        sentiment_dict = AzureFace.get_face_sentiment_bytes(blob)
+
+        if sentiment_dict:
+            majority_sentiment = max(sentiment_dict.items(), key=operator.itemgetter(1))[0]
+            return majority_sentiment
+
+        return 'Face not found - please try again'
+
+    return 'Please take picture'
+
+
 if __name__ == "__main__":
-    app.run(port=3000, debug=True)
+    app.run(port=3000, debug=True, ssl_context='adhoc')

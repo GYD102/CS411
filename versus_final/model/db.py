@@ -8,11 +8,12 @@ class SQLiteUtil:
 
     # CONNECTION METHODS
     @staticmethod
-    def create_connection(db_file):
+    def create_connection():
         """
         create a database connection to a SQLite database
-        :param db_file : path to sqlite file
         """
+        dir_path = os.path.dirname(os.path.abspath(__file__))
+        db_file = dir_path + '/py_sqlite.db'
         try:
             SQLiteUtil.connection = sqlite3.connect(db_file)
         except Error as e:
@@ -89,7 +90,7 @@ class SQLiteUtil:
         :param vals:
         """
         sql = """
-              INSERT INTO UserInfo
+              INSERT OR REPLACE INTO UserInfo
               VALUES (?,?)
               """
 
@@ -99,7 +100,7 @@ class SQLiteUtil:
     @staticmethod
     def insert_senator(senator_id, image_url, sen_name, bio):
         sql = """
-                INSERT INTO Senator
+                INSERT OR REPLACE INTO Senator
                 VALUES (?,?,?,?)
         """
         cur = SQLiteUtil.connection.cursor()
@@ -154,21 +155,15 @@ class SQLiteUtil:
         return cur.fetchall()
 
     @staticmethod
-    def select_all_projects():
-        conn = SQLiteUtil.connection
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM projects")
+    def run_sql_select(sql):
+        cur = SQLiteUtil.connection.cursor()
+        cur.execute(sql)
 
-        rows = cur.fetchall()
-        print(len(rows), 'rows')
-
-        for row in rows:
-            print(type(row), row)
+        return cur.fetchall()
 
 
 def test():
-    dir_path = os.path.dirname(os.path.abspath(__file__))
-    SQLiteUtil.create_connection(dir_path + '/py_sqlite.db')
+    SQLiteUtil.create_connection()
 
     if SQLiteUtil.connection:
 
@@ -176,13 +171,15 @@ def test():
         SQLiteUtil.create_senator_table()
         SQLiteUtil.create_versus_result_table()
 
-        # SQLiteUtil.insert_senator('test', 'test_url', 'test_name', 'test_bio')
-        # SQLiteUtil.insert_user_info('test_user_id', 'test_user_name')
-        # SQLiteUtil.insert_versus_result(True, 'test_senator_id', 'test_senator_id2', 'test_winner_id', 'test_user_id')
+        SQLiteUtil.insert_senator('test', 'test_url', 'test_name', 'test_bio')
+        SQLiteUtil.insert_user_info('test_user_id', 'test_user_name')
+        SQLiteUtil.insert_versus_result(True, 'test_senator_id', 'test_senator_id2', 'test_winner_id', 'test_user_id')
 
         print(SQLiteUtil.select_user_info('test_user_id'))
         print(SQLiteUtil.select_senator('test'))
         print(SQLiteUtil.select_versus_results('test_user_id'))
+
+        print(SQLiteUtil.run_sql_select("SELECT * FROM UserInfo"))
 
     else:
         print("Error! cannot create the database connection.")

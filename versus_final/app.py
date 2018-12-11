@@ -6,6 +6,7 @@ import operator
 from model.azure_face import AzureFace
 import config
 from model.mock_db import MockDB
+from model.db import SQLiteUtil
 from controller.quiz_result_processor import QuizResultProcessor
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -25,8 +26,11 @@ def welcome():
 
     user = github.get('/user').json()
 
-    # todo: insert new user into db we don't have this user_id
-    # user_id = user['id']
+    # insert user into db if not exists
+    SQLiteUtil.create_connection()
+    user_id, user_name = user['id'], user['name']
+    SQLiteUtil.insert_user_info(user_id, user_name)
+    SQLiteUtil.close_connection()
 
     return render_template('homepage.html', user=user)
 

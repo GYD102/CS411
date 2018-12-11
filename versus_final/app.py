@@ -5,8 +5,7 @@ import os
 import operator
 from model.azure_face import AzureFace
 import config
-from model.mock_db import MockDB
-from model.db import SQLiteUtil
+from model.db import DbUtil
 from controller.quiz_result_processor import QuizResultProcessor
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -27,10 +26,10 @@ def welcome():
     user = github.get('/user').json()
 
     # insert user into db if not exists
-    SQLiteUtil.create_connection()
+    DbUtil.create_connection()
     user_id, user_name = user['id'], user['name']
-    SQLiteUtil.insert_user_info(user_id, user_name)
-    SQLiteUtil.close_connection()
+    DbUtil.insert_user_info(user_id, user_name)
+    DbUtil.close_connection()
 
     return render_template('homepage.html', user=user)
 
@@ -62,7 +61,7 @@ def logout():
 def pick_senators():
     if github.authorized:
         # senators : dict[senator_name] = senator_id
-        senators = MockDB.get_mock_senators()
+        senators = DbUtil.get_supported_senators()
         return render_template('quiz_pick_senators.html', senators=senators)
 
     return redirect(url_for('welcome'))
@@ -71,7 +70,7 @@ def pick_senators():
 @app.route('/quiz/start', methods=['POST'])
 def start_quiz():
     if github.authorized:
-        questions = MockDB.get_mock_questions()[:3]
+        questions = DbUtil.get_questions()[:3]
 
         # grab the value attribute associated with the options selected
         senator_1 = request.form.get('senator_1')
@@ -92,9 +91,9 @@ def start_quiz():
         is_tie = winner_id is not None
         user_id = github.get('/user').json()['id']
 
-        SQLiteUtil.create_connection()
-        SQLiteUtil.insert_versus_result(is_tie, senator_1, senator_2, winner_id, user_id)
-        SQLiteUtil.close_connection()
+        DbUtil.create_connection()
+        DbUtil.insert_versus_result(is_tie, senator_1, senator_2, winner_id, user_id)
+        DbUtil.close_connection()
 
         session['senator_result'] = winner_id
         return redirect(url_for('quiz_result'))
@@ -107,7 +106,10 @@ def quiz_result():
     if github.authorized:
         if 'senator_result' in session:
             senator_id = session['senator_result']
-            senator = MockDB.get_senator(senator_id)
+
+            DbUtil.create_connection()
+            senator = DbUtil.get_senator_object(senator_id)
+            DbUtil.close_connection()
 
             return render_template('quiz_result.html', senator=senator)
 
@@ -118,9 +120,9 @@ def quiz_result():
 def history():
     if github.authorized:
         user_id = github.get('/user').json()['id']
-        SQLiteUtil.create_connection()
-        results = SQLiteUtil.select_versus_results(user_id)
-        SQLiteUtil.close_connection()
+        DbUtil.create_connection()
+        results = DbUtil.select_versus_results(user_id)
+        DbUtil.close_connection()
 
         return render_template('past_results.html', results=results)
 
@@ -136,6 +138,7 @@ def photo_post():
 
         if sentiment_dict:
             majority_sentiment = max(sentiment_dict.items(), key=operator.itemgetter(1))[0]
+            print(majority_sentiment)
             score = AzureFace.get_score(majority_sentiment)
             return str(score)
 

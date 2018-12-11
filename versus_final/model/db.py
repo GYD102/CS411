@@ -1,9 +1,10 @@
 import sqlite3
 from sqlite3 import Error
+from model.orm import ORM
 import os
 
 
-class SQLiteUtil:
+class DbUtil:
     connection = None
 
     # CONNECTION METHODS
@@ -15,7 +16,7 @@ class SQLiteUtil:
         dir_path = os.path.dirname(os.path.abspath(__file__))
         db_file = dir_path + '/py_sqlite.db'
         try:
-            SQLiteUtil.connection = sqlite3.connect(db_file)
+            DbUtil.connection = sqlite3.connect(db_file)
         except Error as e:
             print(e)
         finally:
@@ -24,9 +25,9 @@ class SQLiteUtil:
     @staticmethod
     def close_connection():
         """ save changes to db and close connection """
-        if SQLiteUtil.connection:
-            SQLiteUtil.connection.commit()
-            SQLiteUtil.connection.close()
+        if DbUtil.connection:
+            DbUtil.connection.commit()
+            DbUtil.connection.close()
 
     # CREATE TABLE METHODS
     @staticmethod
@@ -36,7 +37,7 @@ class SQLiteUtil:
         :param create_table_sql: a CREATE TABLE statement
         :return:
         """
-        conn = SQLiteUtil.connection
+        conn = DbUtil.connection
         try:
             c = conn.cursor()
             c.execute(create_table_sql)
@@ -51,7 +52,7 @@ class SQLiteUtil:
                 user_name VARCHAR
                 );
         """
-        SQLiteUtil.create_table(sql)
+        DbUtil.create_table(sql)
 
     @staticmethod
     def create_senator_table():
@@ -63,7 +64,7 @@ class SQLiteUtil:
                     bio VARCHAR
                 );
         """
-        SQLiteUtil.create_table(sql)
+        DbUtil.create_table(sql)
 
     @staticmethod
     def create_versus_result_table():
@@ -81,7 +82,7 @@ class SQLiteUtil:
             FOREIGN KEY (user_id) REFERENCES UserInfo(user_id)
             );
         """
-        SQLiteUtil.create_table(sql)
+        DbUtil.create_table(sql)
 
     # INSERT ROW METHODS
     @staticmethod
@@ -94,7 +95,7 @@ class SQLiteUtil:
               VALUES (?,?)
               """
 
-        cur = SQLiteUtil.connection.cursor()
+        cur = DbUtil.connection.cursor()
         cur.execute(sql, [user_id, user_name])
 
     @staticmethod
@@ -103,7 +104,7 @@ class SQLiteUtil:
                 INSERT OR REPLACE INTO Senator
                 VALUES (?,?,?,?)
         """
-        cur = SQLiteUtil.connection.cursor()
+        cur = DbUtil.connection.cursor()
         cur.execute(sql, [senator_id, image_url, sen_name, bio])
 
     @staticmethod
@@ -112,7 +113,7 @@ class SQLiteUtil:
                 INSERT INTO VersusResult (is_tie, senatorID1, senatorID2, winnerID, user_id)
                 VALUES (?, ?, ?, ?, ?)
                 """
-        cur = SQLiteUtil.connection.cursor()
+        cur = DbUtil.connection.cursor()
         cur.execute(sql, [is_tie, senatorID1, senatorID2, winnerID, user_id])
 
     # GET DATA METHODS
@@ -124,7 +125,7 @@ class SQLiteUtil:
                 WHERE user_id == ?
             """
 
-        cur = SQLiteUtil.connection.cursor()
+        cur = DbUtil.connection.cursor()
         cur.execute(sql, [user_id])
 
         return cur.fetchone()
@@ -137,7 +138,7 @@ class SQLiteUtil:
                 WHERE senator_id == ?
               """
 
-        cur = SQLiteUtil.connection.cursor()
+        cur = DbUtil.connection.cursor()
         cur.execute(sql, [senator_id])
 
         return cur.fetchone()
@@ -150,27 +151,50 @@ class SQLiteUtil:
               WHERE user_id == ?
         """
 
-        cur = SQLiteUtil.connection.cursor()
+        cur = DbUtil.connection.cursor()
         cur.execute(sql, [user_id])
 
         return cur.fetchall()
 
     @staticmethod
     def run_sql_select(sql):
-        cur = SQLiteUtil.connection.cursor()
+        cur = DbUtil.connection.cursor()
         cur.execute(sql)
 
         return cur.fetchall()
 
+    # ETC.
+    @staticmethod
+    def get_supported_senators():
+        return {'Lamar Alexander': 'A000360', 'Richard Blumenthal': 'B001277', 'Tammy Baldwin': 'B001230',
+                'John Barrasso': 'B001261', 'Kirsten Gillibrand': 'G000555'}
+
+    @staticmethod
+    def get_questions():
+        return [
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum quis lectus faucibus, feugiat mi eu?',
+            'Vestibulum dolor. Fusce dapibus at enim ac hendrerit. Etiam et cursus dui. Suspendisse at justo consequat?',
+            'Vulputate sapien non, aliquam massa. Vivamus vitae nibh at nisi interdum tempus vel non odio. Nunc ligula eros?',
+            'Dignissim quis cursus quis, fringilla lacinia leo. Cras eros ipsum, imperdiet eu sagittis euismod, cursus sed ipsum?',
+            'Donec malesuada lacinia tortor, a consequat augue viverra non. Sed a leo convallis, malesuada nulla mollis?',
+            'Blandit ante. Pellentesque at eleifend eros, et convallis felis. Maecenas euismod, nisi et sollicitudin aliquet?',
+            'Nunc magna vestibulum velit, posuere pharetra risus ante non velit?'
+        ]
+
+    @staticmethod
+    def get_senator_object(senator_id):
+        senator = ORM.map_senator(DbUtil.select_senator(senator_id))
+        return senator
+
 
 def test():
-    SQLiteUtil.create_connection()
+    DbUtil.create_connection()
 
-    if SQLiteUtil.connection:
+    if DbUtil.connection:
 
-        SQLiteUtil.create_user_info_table()
-        SQLiteUtil.create_senator_table()
-        SQLiteUtil.create_versus_result_table()
+        DbUtil.create_user_info_table()
+        DbUtil.create_senator_table()
+        DbUtil.create_versus_result_table()
 
         # print("TEST INSERTS: ")
         # SQLiteUtil.insert_senator('test', 'test_url', 'test_name', 'test_bio')
@@ -183,14 +207,14 @@ def test():
         # print()
 
         print("PRINTING ALL ROWS")
-        print("USER INFOS:", SQLiteUtil.run_sql_select("SELECT * FROM UserInfo"))
-        print("SENATORS:", SQLiteUtil.run_sql_select("SELECT * FROM Senator"))
-        print("RESULTS:", SQLiteUtil.run_sql_select("SELECT * FROM VersusResult"))
+        print("USER INFOS:", DbUtil.run_sql_select("SELECT * FROM UserInfo"))
+        print("SENATORS:", DbUtil.run_sql_select("SELECT * FROM Senator"))
+        print("RESULTS:", DbUtil.run_sql_select("SELECT * FROM VersusResult"))
 
     else:
         print("Error! cannot create the database connection.")
 
-    SQLiteUtil.close_connection()
+    DbUtil.close_connection()
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@ import requests
 import config
 from bs4 import BeautifulSoup
 from model.popos.senator import Senator
-from model.db import SQLiteUtil
+from model.db import DbUtil
 import time
 
 cached_senators = {'Lamar Alexander': 'A000360', 'Kelly Ayotte': 'A000368', 'Tammy Baldwin': 'B001230',
@@ -85,13 +85,13 @@ class ProPublica:
         senators = ProPublica.get_senator_ids()
         senators_id_to_name = {v: k for k, v in senators.items()}
 
-        SQLiteUtil.create_connection()
+        DbUtil.create_connection()
         for senator_id, name in senators_id_to_name.items():
             time.sleep(1)   # wait 1 second between hits
             bio, image_url = ProPublica.get_senator_bio_and_image(senator_id)
-            SQLiteUtil.insert_senator(senator_id, image_url, name, bio)
+            DbUtil.insert_senator(senator_id, image_url, name, bio)
 
-        SQLiteUtil.close_connection()
+        DbUtil.close_connection()
 
     @staticmethod
     def get_senator_bio_and_image(id):
@@ -132,9 +132,9 @@ class ProPublica:
         :param senator_id: str
         :return: senator : Senator
         """
-        SQLiteUtil.create_connection()
-        _, image_url, name, bio = SQLiteUtil.select_senator(senator_id)
-        SQLiteUtil.close_connection()
+        DbUtil.create_connection()
+        _, image_url, name, bio = DbUtil.select_senator(senator_id)
+        DbUtil.close_connection()
         return Senator(senator_id, name, bio, image_url)
 
 

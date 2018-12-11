@@ -1,6 +1,3 @@
-from model.mock_db import MockDB
-
-
 class VersusResult:
 
     def __init__(self, res_id, senator_id_1, senator_id_2, winner_id, is_tie, user_id):
@@ -20,17 +17,11 @@ class VersusResult:
         self.is_tie = is_tie
         self.user_id = user_id
 
-    def get_winner(self):
-        """
-        :return: winner : Senator
-        """
-        return MockDB.get_senator(self.winner_id)
-
     def get_loser(self):
         """
-        :return: loser : Senator
+        :return: loser : senator_id : string
         """
         if self.senator_id_1 == self.winner_id:
-            return MockDB.get_senator(self.senator_id_2)
+            return self.senator_id_2
 
-        return MockDB.get_senator(self.senator_id_1)
+        return self.senator_id_1

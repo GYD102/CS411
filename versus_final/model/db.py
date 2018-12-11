@@ -47,8 +47,8 @@ class SQLiteUtil:
     def create_user_info_table():
         sql = """
                 CREATE TABLE IF NOT EXISTS UserInfo (
-                user_id VARCHAR(255) PRIMARY KEY,
-                user_name VARCHAR(255)
+                user_id VARCHAR PRIMARY KEY,
+                user_name VARCHAR
                 );
         """
         SQLiteUtil.create_table(sql)
@@ -57,10 +57,10 @@ class SQLiteUtil:
     def create_senator_table():
         sql = """
                 CREATE TABLE IF NOT EXISTS Senator (
-                    senator_id VARCHAR(255) PRIMARY KEY,
-                    image VARCHAR(255),
-                    sen_name VARCHAR(255),
-                    bio VARCHAR(255)
+                    senator_id VARCHAR PRIMARY KEY,
+                    image VARCHAR,
+                    sen_name VARCHAR,
+                    bio VARCHAR
                 );
         """
         SQLiteUtil.create_table(sql)
@@ -71,10 +71,10 @@ class SQLiteUtil:
             CREATE TABLE IF NOT EXISTS VersusResult (
             versusID INTEGER PRIMARY KEY,
             is_tie bool,
-            senatorID1 VARCHAR(255),
-            senatorID2 VARCHAR(255),
-            winnerID VARCHAR(255),
-            user_id VARCHAR(255),
+            senatorID1 VARCHAR,
+            senatorID2 VARCHAR,
+            winnerID VARCHAR,
+            user_id VARCHAR,
             FOREIGN KEY (senatorID1) REFERENCES Senator(senator_id),
             FOREIGN KEY (senatorID2) REFERENCES Senator(senator_id),
             FOREIGN KEY (winnerID) REFERENCES Senator(senator_id),
@@ -184,6 +184,7 @@ def test():
 
         print("PRINTING ALL ROWS")
         print("USER INFOS:", SQLiteUtil.run_sql_select("SELECT * FROM UserInfo"))
+        print("SENATORS:", SQLiteUtil.run_sql_select("SELECT * FROM Senator"))
         print("RESULTS:", SQLiteUtil.run_sql_select("SELECT * FROM VersusResult"))
 
     else:

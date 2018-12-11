@@ -2,8 +2,9 @@ import requests
 import config
 from bs4 import BeautifulSoup
 from model.popos.senator import Senator
+from model.db import SQLiteUtil
+import time
 
-# todo: store this in db for senators we're using
 cached_senators = {'Lamar Alexander': 'A000360', 'Kelly Ayotte': 'A000368', 'Tammy Baldwin': 'B001230',
                    'John Barrasso': 'B001261', 'Max Baucus': 'B000243', 'Mark Begich': 'B001265',
                    'Michael Bennet': 'B001267', 'Richard Blumenthal': 'B001277', 'Roy Blunt': 'B000575',
@@ -60,11 +61,8 @@ class ProPublica:
         """
         :return: dict[senator_name] = senator_id
         """
-        if cached_senators:
-            return cached_senators
-
-        # we're only going through chambers 113 - 115
-        chambers = [113, 114, 115]
+        # we're only going through chamber 115
+        chambers = [115]
         senators = {}
 
         for chamber in chambers:
@@ -80,6 +78,22 @@ class ProPublica:
         return senators
 
     @staticmethod
+    def save_senators():
+        """
+        saves senators to sqlite db
+        """
+        senators = ProPublica.get_senator_ids()
+        senators_id_to_name = {v: k for k, v in senators.items()}
+
+        SQLiteUtil.create_connection()
+        for senator_id, name in senators_id_to_name.items():
+            time.sleep(1)   # wait 1 second between hits
+            bio, image_url = ProPublica.get_senator_bio_and_image(senator_id)
+            SQLiteUtil.insert_senator(senator_id, image_url, name, bio)
+
+        SQLiteUtil.close_connection()
+
+    @staticmethod
     def get_senator_bio_and_image(id):
         """
         :param id: string
@@ -93,7 +107,11 @@ class ProPublica:
         soup = BeautifulSoup(html_doc, 'html.parser')
 
         bio = soup.p.text
-        img_url = 'http:' + soup.find_all('img')[1]['src']
+        images = soup.find_all('img')
+        img_url = 'http://zebconference.com/wp-content/uploads/2018/07/Blank-Person-Image.png'
+        if len(images) > 1:
+            img_url = 'http:' + images[1]['src']
+
         return bio, img_url
 
     @staticmethod
@@ -114,21 +132,26 @@ class ProPublica:
         :param senator_id: str
         :return: senator : Senator
         """
-        name = cached_senators_id_to_name[senator_id]
-        bio, image_url = ProPublica.get_senator_bio_and_image(senator_id)
+        SQLiteUtil.create_connection()
+        _, image_url, name, bio = SQLiteUtil.select_senator(senator_id)
+        SQLiteUtil.close_connection()
         return Senator(senator_id, name, bio, image_url)
 
 
 def test():
-    senators = ProPublica.get_senator_ids()
-    print(senators)
-
-    bio, image_url = ProPublica.get_senator_bio_and_image(senators['Bernard Sanders'])
-    print(bio, image_url)
-
-    blob = ProPublica.get_image_blob(image_url)
-    print(blob)
+    # senators = ProPublica.get_senator_ids()
+    # print(senators)
+    #
+    # bio, image_url = ProPublica.get_senator_bio_and_image(senators['Bernard Sanders'])
+    # print(bio, image_url)
+    #
+    # blob = ProPublica.get_image_blob(image_url)
+    # print(blob)
+    bernie = ProPublica.get_senator_object(cached_senators['Bernie Sanders'])
+    print(bernie.image_url, bernie.biography, bernie.id, bernie.name)
 
 
 if __name__ == "__main__":
+    # ProPublica.save_senators()
     test()
+

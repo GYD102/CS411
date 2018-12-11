@@ -1,11 +1,15 @@
-Stances = ['Abortion'nm, 'Firearms and explosives', 'Refugees, asylum, displaced persons', 'Immigration status and procedures','Sex, gender, sexual orientation discrimination','Health care coverage and access', 'Labor standards','Tax administration and collection,taxpayers', 'International law and treaties', 'Intelligence activities,surveillance,classified information']
+from propublica_glib import *
+
+Stances = ['Abortion', 'Firearms and explosives', 'Refugees, asylum, displaced persons', 'Immigration status and procedures','Sex, gender, sexual orientation discrimination','Health care coverage and access', 'Labor standards','Tax administration and collection,taxpayers', 'International law and treaties', 'Intelligence activities','surveillance','classified information']
 
 def get_sen_core_from_file(sen_code):
     tf = open(sen_code+".txt","r")
     ustr = tf.read()
+    d = locals()
     tf.close()
-    exec("d = " + ustr)
-    return d
+    print("f = " + ustr)
+    exec ("f = " + ustr, globals(), d)
+    return d['f']
 
 
 s1 = {} # Either get from the above function
@@ -23,9 +27,9 @@ def comp(key, score):
     if key in s2.keys():
         b = s2[key]
         b = b / abs(b)
-    if score = a:
+    if score == a:
         score_s1 += 1
-    if score = b:
+    if score == b:
         score_s2 += 1
 
 # To run the above on a full set of stances,

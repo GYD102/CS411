@@ -86,8 +86,17 @@ def start_quiz():
                                    question_num=question_num, question=question, answers=answers)
 
         # if we reach here, the quiz is finished
-        session['senator_result'] = QuizResultProcessor.process_results(senator_1, senator_2, answers)
+        # save result to db
+        winner_id = QuizResultProcessor.process_results(senator_1, senator_2, answers)
+        loser_id = senator_1 if senator_2 == winner_id else senator_2
+        is_tie = winner_id is not None
+        user_id = github.get('/user').json()['id']
 
+        SQLiteUtil.create_connection()
+        SQLiteUtil.insert_versus_result(is_tie, senator_1, senator_2, winner_id, user_id)
+        SQLiteUtil.close_connection()
+
+        session['senator_result'] = winner_id
         return redirect(url_for('quiz_result'))
 
     return redirect(url_for('welcome'))

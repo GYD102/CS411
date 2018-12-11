@@ -115,6 +115,7 @@ class SQLiteUtil:
         cur = SQLiteUtil.connection.cursor()
         cur.execute(sql, [is_tie, senatorID1, senatorID2, winnerID, user_id])
 
+    # GET DATA METHODS
     @staticmethod
     def select_user_info(user_id):
         sql = """
@@ -171,15 +172,19 @@ def test():
         SQLiteUtil.create_senator_table()
         SQLiteUtil.create_versus_result_table()
 
-        SQLiteUtil.insert_senator('test', 'test_url', 'test_name', 'test_bio')
-        SQLiteUtil.insert_user_info('test_user_id', 'test_user_name')
-        SQLiteUtil.insert_versus_result(True, 'test_senator_id', 'test_senator_id2', 'test_winner_id', 'test_user_id')
+        # print("TEST INSERTS: ")
+        # SQLiteUtil.insert_senator('test', 'test_url', 'test_name', 'test_bio')
+        # SQLiteUtil.insert_user_info('test_user_id', 'test_user_name')
+        # SQLiteUtil.insert_versus_result(True, 'test_senator_id', 'test_senator_id2', 'test_winner_id', 'test_user_id')
+        #
+        # print(SQLiteUtil.select_user_info('test_user_id'))
+        # print(SQLiteUtil.select_senator('test'))
+        # print(SQLiteUtil.select_versus_results('test_user_id'))
+        # print()
 
-        print(SQLiteUtil.select_user_info('test_user_id'))
-        print(SQLiteUtil.select_senator('test'))
-        print(SQLiteUtil.select_versus_results('test_user_id'))
-
-        print(SQLiteUtil.run_sql_select("SELECT * FROM UserInfo"))
+        print("PRINTING ALL ROWS")
+        print("USER INFOS:", SQLiteUtil.run_sql_select("SELECT * FROM UserInfo"))
+        print("RESULTS:", SQLiteUtil.run_sql_select("SELECT * FROM VersusResult"))
 
     else:
         print("Error! cannot create the database connection.")

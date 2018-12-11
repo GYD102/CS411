@@ -1,11 +1,12 @@
 from model.propublica import ProPublica
 
+
 class MockDB:
 
     @staticmethod
     def get_mock_senators():
-        return {'Lamar Alexander': 'A000360', 'Kelly Ayotte': 'A000368', 'Tammy Baldwin': 'B001230',
-                'John Barrasso': 'B001261', 'Max Baucus': 'B000243'}
+        return {'Lamar Alexander': 'A000360', 'Richard Blumenthal': 'B001277', 'Tammy Baldwin': 'B001230',
+                'John Barrasso': 'B001261', 'Kirsten Gillibrand': 'G000555'}
 
     @staticmethod
     def get_mock_questions():
@@ -19,7 +20,6 @@ class MockDB:
             'Nunc magna vestibulum velit, posuere pharetra risus ante non velit?'
         ]
 
-
     @staticmethod
     def get_senator(senator_id):
         senator_in_db = False
@@ -31,4 +31,3 @@ class MockDB:
         else:
             # return senator_object from db
             return None
-

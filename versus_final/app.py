@@ -117,7 +117,12 @@ def quiz_result():
 @app.route('/history', methods=['GET'])
 def history():
     if github.authorized:
-        return 'HISTORY'
+        user_id = github.get('/user').json()['id']
+        SQLiteUtil.create_connection()
+        results = SQLiteUtil.select_versus_results(user_id)
+        SQLiteUtil.close_connection()
+
+        return render_template('past_results.html', results=results)
 
     return redirect(url_for('welcome'))
 

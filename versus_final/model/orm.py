@@ -31,4 +31,4 @@ class ORM:
         """
         result_id, is_tie, senator_id_1, senator_id_2, winner_id, user_id = tup
         return VersusResult(senator_id_1=senator_id_1, senator_id_2=senator_id_2,
-                            winner_id=winner_id, user_id=user_id, res_id=result_id)
+                            winner_id=winner_id, user_id=user_id, res_id=result_id, is_tie=is_tie)

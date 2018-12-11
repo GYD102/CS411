@@ -6,15 +6,16 @@
 </head>
 <body>
 
+<h1>Your match history:</h1>
+<br>
+
 {% for result in results %}
 
-    {% for k in result %}
+<p>{{ senator_dict[result.senator_id_1] }} vs {{ senator_dict[result.senator_id_2] }}</p>
+<h3>Winner: {{ senator_dict[result.winner_id] }}</h3>
 
-        {{ k }}
 
-    {% endfor %}
-
-    <br>
+<br>
 
 {% endfor %}
 

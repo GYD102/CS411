@@ -186,6 +186,13 @@ class DbUtil:
         senator = ORM.map_senator(DbUtil.select_senator(senator_id))
         return senator
 
+    @staticmethod
+    def get_versus_results_objects(versus_results_tuples):
+        arr = []
+        for tup in versus_results_tuples:
+            arr.append(ORM.map_versus_result(tup))
+        return arr
+
 
 def test():
     DbUtil.create_connection()

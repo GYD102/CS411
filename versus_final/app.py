@@ -7,6 +7,7 @@ from model.azure_face import AzureFace
 import config
 from model.db import DbUtil
 from controller.quiz_result_processor import QuizResultProcessor
+from model.propublica import cached_senators_id_to_name
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
@@ -122,9 +123,10 @@ def history():
         user_id = github.get('/user').json()['id']
         DbUtil.create_connection()
         results = DbUtil.select_versus_results(user_id)
+        results = DbUtil.get_versus_results_objects(results)
         DbUtil.close_connection()
 
-        return render_template('past_results.html', results=results)
+        return render_template('past_results.html', results=results, senator_dict=cached_senators_id_to_name)
 
     return redirect(url_for('welcome'))
 

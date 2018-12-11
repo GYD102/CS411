@@ -11,14 +11,16 @@ def get_sen_core_from_file(sen_code):
     exec ("f = " + ustr, globals(), d)
     return d['f']
 
+#s1 = get_sen_core_from_file("")
+#s2 = get_sen_core_from_file("")
 
-s1 = {} # Either get from the above function
-s2 = {} # call score_this_senator(sud[code])
-score_s1 = 0
-score_s2 = 0
+#user = {}
+
+#score_s1 = 0
+#score_s2 = 0
 # User results come in one at a time
 # The below function iterates the score
-def comp(key, score):
+def comp(key, user_score, score_list, s1, s2):
     a = 0
     b = 0
     if key in s1.keys():
@@ -27,11 +29,16 @@ def comp(key, score):
     if key in s2.keys():
         b = s2[key]
         b = b / abs(b)
-    if score == a:
-        score_s1 += 1
-    if score == b:
-        score_s2 += 1
+    if user_score == a:
+        score_list[0] += 1
+    if user_score == b:
+        score_list[1] += 1
+    return score_list
 
+#for i in user:
+#    comp(i, user[i])
+    
+        
 # To run the above on a full set of stances,
 # for i in Stances: comp(i, +/-1)
 

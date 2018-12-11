@@ -1,4 +1,4 @@
-Stances = ['Abortion', 'Firearms and explosives', 'Refugees, asylum, displaced persons', 'Immigration status and procedures','Sex, gender, sexual orientation discrimination','Health care coverage and access', 'Labor standards','Tax administration and collection,taxpayers', 'International law and treaties', 'Intelligence activities,surveillance,classified information']
+Stances = ['Abortion'nm, 'Firearms and explosives', 'Refugees, asylum, displaced persons', 'Immigration status and procedures','Sex, gender, sexual orientation discrimination','Health care coverage and access', 'Labor standards','Tax administration and collection,taxpayers', 'International law and treaties', 'Intelligence activities,surveillance,classified information']
 
 def get_sen_core_from_file(sen_code):
     tf = open(sen_code+".txt","r")

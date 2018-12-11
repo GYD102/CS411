@@ -1,16 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>
+p1 {font-size: 100px;}
+p2 {font-size: 55px;}
+p3 {font-size: 35px;}
+</style>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
 </head>
-<body>
+<body background="https://cdn.hipwallpaper.com/i/70/20/8Yf4xj.jpg">
 
-<p>Login to continue:</p>
+    <p1><font color = "#FFFFFF" face = "arial black"><center>VERSUS</center></font></p1>
+    <p2><font color = "#FFFFFF"><center>They're fighting for your votes!</center></font></p2>
+    <p3><font color = "#FFFFFF"><center>Login to Continue:</center></font></p3>
 
-<form method="get" action="{{ url_for('github_login') }}">
-    <button type="submit">Login with GitHub</button>
-</form>
+    <br>
+
+    <form method="get" action="{{ url_for('github_login') }}">
+     <div style = "text-align: center;">
+    <button class="waves-effect waves-light btn"  type="submit" style="background-color: black; color: white;">Login with GitHub</button>
+    </div>
+    </form>
 
 </body>
 </html>

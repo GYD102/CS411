@@ -170,7 +170,7 @@ class DbUtil:
                 'John Barrasso': 'B001261', 'Kirsten Gillibrand': 'G000555'}
 
     @staticmethod
-    def get_questions():
+    def get_questions_scores_topics():
 
         # question to score; where
         questions = ['Do you support abortion?',
@@ -194,7 +194,7 @@ class DbUtil:
                   'Health care coverage and access',
                   'Sex,gender,sexual orientation discrimination']
 
-        return questions
+        return questions, affirmative_scores, topics
 
     @staticmethod
     def get_senator_object(senator_id):

@@ -1,3 +1,5 @@
+from model.db import DbUtil
+
 class QuizResultProcessor:
 
     @staticmethod
@@ -27,6 +29,23 @@ class QuizResultProcessor:
 
         results = results_to_list(results)
         print(results)
+
+        def results_to_score(results, score_map):
+            score = []
+            for i, v in enumerate(results):
+                if v == 0:
+                    score.append(0)
+                elif v == 1:
+                    score.append(score_map[i])
+                else:
+                    score.append(-(score_map[i]))
+
+            return score
+
+        _, score_map, topics = DbUtil.get_questions_scores_topics()
+        score = results_to_score(results, score_map)
+
+        print(score)
 
         # todo: actual compare results to senator stances and return sen_id with greatest overlap
         return sen_id_1

@@ -71,7 +71,8 @@ def pick_senators():
 @app.route('/quiz/start', methods=['POST'])
 def start_quiz():
     if github.authorized:
-        questions = DbUtil.get_questions()[:3]
+        questions, _, _ = DbUtil.get_questions_scores_topics()
+        questions = questions[:3]
 
         # grab the value attribute associated with the options selected
         senator_1 = request.form.get('senator_1')

@@ -171,15 +171,30 @@ class DbUtil:
 
     @staticmethod
     def get_questions():
-        return [
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum quis lectus faucibus, feugiat mi eu?',
-            'Vestibulum dolor. Fusce dapibus at enim ac hendrerit. Etiam et cursus dui. Suspendisse at justo consequat?',
-            'Vulputate sapien non, aliquam massa. Vivamus vitae nibh at nisi interdum tempus vel non odio. Nunc ligula eros?',
-            'Dignissim quis cursus quis, fringilla lacinia leo. Cras eros ipsum, imperdiet eu sagittis euismod, cursus sed ipsum?',
-            'Donec malesuada lacinia tortor, a consequat augue viverra non. Sed a leo convallis, malesuada nulla mollis?',
-            'Blandit ante. Pellentesque at eleifend eros, et convallis felis. Maecenas euismod, nisi et sollicitudin aliquet?',
-            'Nunc magna vestibulum velit, posuere pharetra risus ante non velit?'
-        ]
+
+        # question to score; where
+        questions = ['Do you support abortion?',
+                     'Do you believe there should be more constraints on the process of purchasing a gun?',
+                     'Do you support international intervention?',
+                     'Do you support the US continuing NSA surveillance of its allies?',
+                     'Should the US accept refugees?',
+                     'Should the tax rate for corporations increase?',
+                     'Do you support the Patient Protection and Affordable Care Act (Obamacare)?',
+                     'Do you support the legalization of same sex marriage?']
+
+        # score corresponds to positive sentiment response
+        affirmative_scores = [-1, 1, -1, -1, 1, 1, 1, 1]
+
+        topics = ['Abortion',
+                  'Firearms and explosives',
+                  'Refugees,asylum,displaced persons',
+                  'Intelligence activities,surveillance,classified information',
+                  'Immigration status and procedures',
+                  'Tax administration and collection,taxpayers',
+                  'Health care coverage and access',
+                  'Sex,gender,sexual orientation discrimination']
+
+        return questions
 
     @staticmethod
     def get_senator_object(senator_id):

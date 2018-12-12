@@ -1,4 +1,6 @@
 from model.db import DbUtil
+from model.compare import WinnerComputer
+
 
 class QuizResultProcessor:
 
@@ -45,7 +47,7 @@ class QuizResultProcessor:
         _, score_map, topics = DbUtil.get_questions_scores_topics()
         score = results_to_score(results, score_map)
 
-        print(score)
+        users_stances_dict = {topic: val for topic, val in zip(topics, score)}
+        winning_senator_id = WinnerComputer.compute_winner(sen_id_1, sen_id_2, users_stances_dict)
 
-        # todo: actual compare results to senator stances and return sen_id with greatest overlap
-        return sen_id_1
+        return winning_senator_id

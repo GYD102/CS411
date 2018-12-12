@@ -1,8 +1,14 @@
+import os
+
+__location__ = os.path.realpath(
+    os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+
 class WinnerComputer:
 
     @staticmethod
     def get_sen_core_from_file(sen_code):
-        tf = open(sen_code + ".txt", "r")
+        tf = open(os.path.join(__location__, sen_code + ".txt"), "r")
         ustr = tf.read()
         d = locals()
         tf.close()
@@ -47,7 +53,7 @@ class WinnerComputer:
         senator_stances_2 = WinnerComputer.get_sen_core_from_file(senator_id_2)
         score_list = [0, 0]
         for topic in user_scores:
-            score_list = WinnerComputer.comp(topic, user[topic], score_list, senator_stances_1, senator_stances_2)
+            score_list = WinnerComputer.comp(topic, user_scores[topic], score_list, senator_stances_1, senator_stances_2)
 
         print(score_list)
 
@@ -58,7 +64,7 @@ class WinnerComputer:
 
 
 if __name__ == "__main__":
-    s_id_1 = 'B001230'
+    s_id_1 = 'A000360'
     s_id_2 = 'B001261'
     user = {'Child health': 15, "Women's health": 33, 'Right of privacy': 9, 'Disability and paralysis': 17,
             'Aviation and airports': 4, 'Transportation programs funding': 10, 'Transportation and Public Works': 18,

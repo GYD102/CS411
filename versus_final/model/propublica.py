@@ -87,7 +87,7 @@ class ProPublica:
 
         DbUtil.create_connection()
         for senator_id, name in senators_id_to_name.items():
-            time.sleep(1)   # wait 1 second between hits
+            time.sleep(1)  # wait 1 second between hits
             bio, image_url = ProPublica.get_senator_bio_and_image(senator_id)
             DbUtil.insert_senator(senator_id, image_url, name, bio)
 

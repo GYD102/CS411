@@ -166,8 +166,22 @@ class DbUtil:
     # ETC.
     @staticmethod
     def get_supported_senators():
-        return {'Lamar Alexander': 'A000360', 'Richard Blumenthal': 'B001277', 'Tammy Baldwin': 'B001230',
-                'John Barrasso': 'B001261', 'Kirsten Gillibrand': 'G000555'}
+        return {
+            'Lamar Alexander': 'A000360',
+            'Tammy Baldwin': 'B001230',
+            'John Barrasso': 'B001261',
+            'Michael Bennet': 'B001267',
+            'Richard Blumenthal': 'B001277',
+            'Roy Blunt': 'B000575',
+            'Joe Donnelly': 'D000607',
+            'Richard Durbin': 'D000563',
+            'Michael Enzi': 'E000285',
+            'Charles Schumer': 'S000148',
+            'Elizabeth Warren': 'W000817',
+            'Steve Daines': 'D000618',
+            'Joni Ernst': 'E000295',
+            'Tammy Duckworth': 'D000622'
+        }
 
     @staticmethod
     def get_questions_scores_topics():

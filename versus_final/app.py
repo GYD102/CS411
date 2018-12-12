@@ -72,7 +72,7 @@ def pick_senators():
 def start_quiz():
     if github.authorized:
         questions, _, _ = DbUtil.get_questions_scores_topics()
-        questions = questions[:3]
+        questions = questions
 
         # grab the value attribute associated with the options selected
         senator_1 = request.form.get('senator_1')
@@ -124,7 +124,7 @@ def history():
         user_id = github.get('/user').json()['id']
         DbUtil.create_connection()
         results = DbUtil.select_versus_results(user_id)
-        results = DbUtil.get_versus_results_objects(results)
+        results = DbUtil.get_versus_results_objects(results)[::-1] # reversed order
         DbUtil.close_connection()
 
         return render_template('past_results.html', results=results, senator_dict=cached_senators_id_to_name)
